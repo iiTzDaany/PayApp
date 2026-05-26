@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayApp+</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:#eef2f7;
+    color:#0f172a;
+    overflow:hidden;
+}
+
+.auth-container{
+    width:100%;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
+}
+
+.auth-card{
+    width:920px;
+    height:560px;
+    background:white;
+    border-radius:28px;
+    overflow:hidden;
+    display:flex;
+    box-shadow:0 25px 60px rgba(0,0,0,.35);
+}
+
+.left{
+    width:50%;
+    background:linear-gradient(135deg,#1e3a8a,#2563eb);
+    color:white;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding:55px;
+}
+
+.left h1{
+    font-size:48px;
+    margin-bottom:18px;
+}
+
+.left p{
+    line-height:1.7;
+    opacity:.92;
+    font-size:17px;
+}
+
+.right{
+    width:50%;
+    padding:45px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.right h2{
+    margin-bottom:25px;
+    color:#1e3a8a;
+}
+
+input, select{
+    width:100%;
+    padding:14px 16px;
+    border-radius:14px;
+    border:1px solid #cbd5e1;
+    margin-bottom:15px;
+    font-size:15px;
+    outline:none;
+    transition:.2s;
+}
+
+input:focus, select:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,.15);
+}
+
+button{
+    padding:14px;
+    border:none;
+    border-radius:14px;
+    background:#2563eb;
+    color:white;
+    font-weight:700;
+    cursor:pointer;
+    transition:.25s;
+}
+
+button:hover{
+    background:#1d4ed8;
+    transform:translateY(-1px);
+}
+
+.link{
+    margin-top:18px;
+    text-align:center;
+    color:#2563eb;
+    cursor:pointer;
+    font-weight:600;
+}
+
+.dashboard{
+    display:none;
+    width:100%;
+    height:100vh;
+}
+
+.container-dashboard{
+    display:flex;
+    width:100%;
+    height:100%;
+}
+
+.sidebar{
+    width:260px;
+    background:#0f172a;
+    color:white;
+    padding:24px;
+}
+
+.sidebar h2{
+    margin-bottom:35px;
+    font-size:26px;
+}
+
+.sidebar ul{
+    list-style:none;
+}
+
+.sidebar ul li{
+    padding:15px;
+    border-radius:14px;
+    margin-bottom:10px;
+    cursor:pointer;
+    transition:.25s;
+    font-weight:500;
+}
+
+.sidebar ul li:hover{
+    background:#1e40af;
+    transform:translateX(4px);
+}
+
+.main{
+    flex:1;
+    padding:28px;
+    overflow-y:auto;
+}
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:28px;
+}
+
+.topbar h2{
+    font-size:30px;
+}
+
+.user-pill, .admin-badge{
+    background:white;
+    padding:10px 16px;
+    border-radius:999px;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+    font-weight:600;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:22px;
+    margin-bottom:28px;
+}
+
+.card{
+    background:white;
+    border-radius:24px;
+    padding:26px;
+    box-shadow:0 8px 22px rgba(15,23,42,.08);
+}
+
+.card h3{
+    color:#64748b;
+    font-size:15px;
+    margin-bottom:10px;
+}
+
+.card p{
+    font-size:32px;
+    font-weight:800;
+}
+
+.card.primary{
+    background:linear-gradient(135deg,#2563eb,#1e40af);
+    color:white;
+}
+
+.card.primary h3,
+.card.primary p{
+    color:white;
+}
+
+.chart-container,
+.panel-box{
+    background:white;
+    border-radius:24px;
+    padding:26px;
+    margin-bottom:26px;
+    box-shadow:0 8px 22px rgba(15,23,42,.08);
+}
+
+.panel-box h3{
+    margin-bottom:20px;
+    font-size:21px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+
+th{
+    background:#f8fafc;
+    color:#475569;
+    font-size:14px;
+    text-align:left;
+    padding:14px;
+}
+
+td{
+    padding:14px;
+    border-bottom:1px solid #e2e8f0;
+    font-size:14px;
+}
+
+tr:hover td{
+    background:#f8fafc;
+}
+
+.form-grid{
+    max-width:480px;
+}
+
+.tag{
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:700;
+}
+
+.tag-green{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.tag-red{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.tag-blue{
+    background:#dbeafe;
+    color:#1e40af;
+}
+
+.admin-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:24px;
+}
+
+.empty{
+    color:#64748b;
+    text-align:center;
+    padding:25px;
+}
+
+@media(max-width:900px){
+    body{
+        overflow:auto;
+    }
+
+    .auth-card{
+        width:92%;
+        height:auto;
+        flex-direction:column;
+    }
+
+    .left,.right{
+        width:100%;
+    }
+
+    .container-dashboard{
+        flex-direction:column;
+    }
+
+    .sidebar{
+        width:100%;
+    }
+
+    .cards,
+    .admin-actions{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="auth-container" id="loginScreen">
+    <div class="auth-card">
+        <div class="left">
+            <h1>PayApp+</h1>
+            <p>Gestiona pagos, transferencias y movimientos financieros desde una plataforma segura, moderna e intuitiva.</p>
+        </div>
+
+        <div class="right">
+            <h2>Iniciar sesión</h2>
+            <input type="email" id="loginCorreo" placeholder="Correo electrónico">
+            <input type="password" id="loginPassword" placeholder="Contraseña">
+            <button onclick="login()">Ingresar</button>
+            <div class="link" onclick="mostrarRegistro()">Crear cuenta</div>
+        </div>
+    </div>
+</div>
+
+<div class="auth-container" id="registerScreen" style="display:none;">
+    <div class="auth-card">
+        <div class="left">
+            <h1>PayApp+</h1>
+            <p>Crea tu cuenta y comienza a usar los servicios financieros digitales.</p>
+        </div>
+
+        <div class="right">
+            <h2>Crear cuenta</h2>
+            <input type="text" id="registerNombre" placeholder="Nombre completo">
+            <input type="email" id="registerCorreo" placeholder="Correo electrónico">
+            <input type="password" id="registerPassword" placeholder="Contraseña">
+            <button onclick="register()">Registrarse</button>
+            <div class="link" onclick="mostrarLogin()">Ya tengo cuenta</div>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard" id="dashboard">
+    <div class="container-dashboard">
+
+        <div class="sidebar">
+            <h2>💳 PayApp+</h2>
+
+            <ul id="menuCliente">
+                <li onclick="mostrarSeccion('inicio')">🏠 Inicio</li>
+                <li onclick="mostrarSeccion('transferencias')">💸 Transferencias</li>
+                <li onclick="mostrarSeccion('pagos')">🧾 Pagos</li>
+                <li onclick="logout()">🚪 Cerrar sesión</li>
+            </ul>
+
+            <ul id="menuAdmin" style="display:none;">
+                <li onclick="mostrarSeccionAdmin('adminInicio')">📊 Panel Admin</li>
+                <li onclick="mostrarSeccionAdmin('adminUsuarios')">👥 Usuarios</li>
+                <li onclick="mostrarSeccionAdmin('adminTransacciones')">🔁 Transacciones</li>
+                <li onclick="mostrarSeccionAdmin('adminAcciones')">⚙️ Acciones</li>
+                <li onclick="logout()">🚪 Cerrar sesión</li>
+            </ul>
+        </div>
+
+        <div class="main">
+
+            <div id="clienteView">
+
+                <div id="inicioSection">
+                    <div class="topbar">
+                        <h2>Dashboard</h2>
+                        <span class="user-pill" id="usuarioNombre"></span>
+                    </div>
+
+                    <div class="cards">
+                        <div class="card primary">
+                            <h3>Saldo disponible</h3>
+                            <p id="saldo">$0</p>
+                        </div>
+                        <div class="card">
+                            <h3>Ingresos</h3>
+                            <p id="ingresos">$0</p>
+                        </div>
+                        <div class="card">
+                            <h3>Gastos</h3>
+                            <p id="gastos">$0</p>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <h3>Movimientos recientes</h3>
+                        <canvas id="chart"></canvas>
+                    </div>
+
+                    <div class="panel-box">
+                        <h3>Transacciones recientes</h3>
+                        <table>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Tipo</th>
+                                <th>Descripción</th>
+                                <th>Monto</th>
+                            </tr>
+                            <tbody id="tablaTransacciones"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="transferenciasSection" style="display:none;">
+                    <div class="topbar">
+                        <h2>Transferencias</h2>
+                    </div>
+
+                    <div class="panel-box">
+                        <h3>Realizar transferencia</h3>
+
+                        <div class="form-grid">
+                            <input type="number" id="cuentaDestino" placeholder="Número de cuenta destino">
+                            <input type="number" id="montoTransferencia" placeholder="Monto a transferir">
+                            <button onclick="crearTransferencia()">Transferir ahora</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="pagosSection" style="display:none;">
+                    <div class="topbar">
+                        <h2>Pago de servicios</h2>
+                    </div>
+
+                    <div class="panel-box">
+                        <h3>Nuevo pago</h3>
+
+                        <div class="form-grid">
+                            <select id="servicioPago">
+                                <option value="">Selecciona un servicio</option>
+                            </select>
+                            <input type="text" id="referenciaPago" placeholder="Referencia del servicio">
+                            <input type="number" id="montoPago" placeholder="Monto a pagar">
+                            <button onclick="realizarPagoServicio()">Pagar servicio</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="adminView" style="display:none;">
+
+                <div id="adminInicioSection">
+                    <div class="topbar">
+                        <h2>Panel de administrador</h2>
+                        <span class="admin-badge" id="adminNombre"></span>
+                    </div>
+
+                    <div class="cards">
+                        <div class="card primary">
+                            <h3>Total usuarios</h3>
+                            <p id="totalUsuarios">0</p>
+                        </div>
+                        <div class="card">
+                            <h3>Total transacciones</h3>
+                            <p id="totalTransacciones">0</p>
+                        </div>
+                        <div class="card">
+                            <h3>Fondos del sistema</h3>
+                            <p id="totalFondos">$0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="adminUsuariosSection" style="display:none;">
+                    <div class="topbar">
+                        <h2>Usuarios</h2>
+                    </div>
+
+                    <div class="panel-box">
+                        <h3>Usuarios registrados</h3>
+                        <table>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Correo</th>
+                                <th>Rol</th>
+                                <th>Estado</th>
+                                <th>Cuenta</th>
+                                <th>Saldo</th>
+                            </tr>
+                            <tbody id="tablaUsuariosAdmin"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="adminTransaccionesSection" style="display:none;">
+                    <div class="topbar">
+                        <h2>Transacciones del sistema</h2>
+                    </div>
+
+                    <div class="panel-box">
+                        <h3>Historial general</h3>
+                        <table>
+                            <tr>
+                                <th>ID</th>
+                                <th>Origen</th>
+                                <th>Usuario origen</th>
+                                <th>Destino</th>
+                                <th>Usuario destino</th>
+                                <th>Monto</th>
+                                <th>Fecha</th>
+                            </tr>
+                            <tbody id="tablaTransaccionesAdmin"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="adminAccionesSection" style="display:none;">
+                    <div class="topbar">
+                        <h2>Acciones administrativas</h2>
+                    </div>
+
+                    <div class="admin-actions">
+                        <div class="panel-box">
+                            <h3>Asignar saldo</h3>
+                            <input type="number" id="adminCuentaSaldo" placeholder="ID de cuenta">
+                            <input type="number" id="adminMontoSaldo" placeholder="Monto a asignar">
+                            <button onclick="asignarSaldoAdmin()">Asignar saldo</button>
+                        </div>
+
+                        <div class="panel-box">
+                            <h3>Administrar usuario</h3>
+                            <input type="number" id="adminUsuarioId" placeholder="ID de usuario">
+
+                            <select id="adminEstadoUsuario">
+                                <option value="activo">Activo</option>
+                                <option value="bloqueado">Bloqueado</option>
+                            </select>
+
+                            <button onclick="cambiarEstadoAdmin()">Cambiar estado</button>
+
+                            <select id="adminRolUsuario">
+                                <option value="cliente">Cliente</option>
+                                <option value="admin">Administrador</option>
+                            </select>
+
+                            <button onclick="cambiarRolAdmin()">Cambiar rol</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+const API_URL = 'https://payapp-backend-s2yo.onrender.com';
+let cuentaUsuario = null;
+let chartInstance = null;
+
+function mostrarRegistro(){
+    loginScreen.style.display = 'none';
+    registerScreen.style.display = 'flex';
+}
+
+function mostrarLogin(){
+    registerScreen.style.display = 'none';
+    loginScreen.style.display = 'flex';
+}
+
+function mostrarSeccion(seccion){
+    inicioSection.style.display = 'none';
+    transferenciasSection.style.display = 'none';
+    pagosSection.style.display = 'none';
+
+    if(seccion === 'inicio') inicioSection.style.display = 'block';
+    if(seccion === 'transferencias') transferenciasSection.style.display = 'block';
+    if(seccion === 'pagos') pagosSection.style.display = 'block';
+}
+
+function mostrarSeccionAdmin(seccion){
+    adminInicioSection.style.display = 'none';
+    adminUsuariosSection.style.display = 'none';
+    adminTransaccionesSection.style.display = 'none';
+    adminAccionesSection.style.display = 'none';
+
+    if(seccion === 'adminInicio') adminInicioSection.style.display = 'block';
+    if(seccion === 'adminUsuarios') adminUsuariosSection.style.display = 'block';
+    if(seccion === 'adminTransacciones') adminTransaccionesSection.style.display = 'block';
+    if(seccion === 'adminAcciones') adminAccionesSection.style.display = 'block';
+}
+
+async function register(){
+    const nombre = registerNombre.value;
+    const correo = registerCorreo.value;
+    const password = registerPassword.value;
+
+    const response = await fetch(`${API_URL}/auth/register`, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body:JSON.stringify({ nombre, correo, password })
+    });
+
+    const data = await response.json();
+
+    if(response.ok){
+        alert('Cuenta creada correctamente');
+        mostrarLogin();
+    }else{
+        alert(data.mensaje || 'Error al registrar');
+    }
+}
+
+async function login(){
+    const correo = loginCorreo.value;
+    const password = loginPassword.value;
+
+    const response = await fetch(`${API_URL}/auth/login`, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body:JSON.stringify({ correo, password })
+    });
+
+    const data = await response.json();
+
+    if(response.ok){
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('usuario', JSON.stringify(data.usuario));
+
+        loginScreen.style.display = 'none';
+        dashboard.style.display = 'block';
+
+        cargarDashboard();
+    }else{
+        alert(data.mensaje || 'Error al iniciar sesión');
+    }
+}
+
+async function cargarDashboard(){
+    const usuario = JSON.parse(localStorage.getItem('usuario'));
+
+    if(usuario.rol === 'admin'){
+        clienteView.style.display = 'none';
+        adminView.style.display = 'block';
+        menuCliente.style.display = 'none';
+        menuAdmin.style.display = 'block';
+
+        adminNombre.innerText = usuario.nombre;
+
+        mostrarSeccionAdmin('adminInicio');
+        cargarPanelAdmin();
+        return;
+    }
+
+    clienteView.style.display = 'block';
+    adminView.style.display = 'none';
+    menuCliente.style.display = 'block';
+    menuAdmin.style.display = 'none';
+
+    usuarioNombre.innerText = usuario.nombre;
+
+    cargarCuentas();
+    cargarTransacciones();
+    cargarEstadisticas();
+    cargarServicios();
+}
+
+async function cargarCuentas(){
+    const token = localStorage.getItem('token');
+
+    const response = await fetch(`${API_URL}/cuentas`, {
+        method:'GET',
+        headers:{ 'Authorization': token }
+    });
+
+    const cuentas = await response.json();
+
+    if(cuentas.length > 0){
+        cuentaUsuario = cuentas[0].id_cuenta;
+        saldo.innerText = `$${cuentas[0].saldo}`;
+    }
+}
+
+async function cargarTransacciones(){
+    const token = localStorage.getItem('token');
+
+    const response = await fetch(`${API_URL}/transacciones`, {
+        method:'GET',
+        headers:{ 'Authorization': token }
+    });
+
+    const transacciones = await response.json();
+    let html = '';
+
+    transacciones.forEach(t => {
+        const tipoMovimiento = String(t.tipo_movimiento).trim().toLowerCase();
+        const esRecibida = tipoMovimiento === 'recibida';
+
+        html += `
+            <tr>
+                <td>${new Date(t.fecha).toLocaleDateString()}</td>
+                <td>
+                    <span class="tag ${esRecibida ? 'tag-green' : 'tag-red'}">
+                        ${esRecibida ? '📥 Recibida' : '📤 Enviada'}
+                    </span>
+                </td>
+                <td>${t.descripcion || 'Movimiento'}</td>
+                <td style="color:${esRecibida ? '#15803d' : '#dc2626'}; font-weight:800;">
+                    ${esRecibida ? '+' : '-'}$${t.monto}
+                </td>
+            </tr>
+        `;
+    });
+
+    tablaTransacciones.innerHTML = html || `
+        <tr>
+            <td colspan="4" class="empty">No hay transacciones registradas</td>
+        </tr>
+    `;
+}
+
+async function cargarEstadisticas(){
+    const token = localStorage.getItem('token');
+
+    const response = await fetch(`${API_URL}/dashboard`, {
+        method:'GET',
+        headers:{ 'Authorization': token }
+    });
+
+    const data = await response.json();
+
+    ingresos.innerText = `$${data.ingresos}`;
+    gastos.innerText = `$${data.gastos}`;
+
+    cargarGrafica(data.movimientos || []);
+}
+
+function cargarGrafica(movimientos){
+    const ctx = document.getElementById('chart');
+    if(!ctx) return;
+
+    const labels = movimientos.map(m => new Date(m.fecha).toLocaleDateString());
+    const valores = movimientos.map(m => Number(m.total));
+
+    if(chartInstance){
+        chartInstance.destroy();
+    }
+
+    chartInstance = new Chart(ctx, {
+        type:'line',
+        data:{
+            labels,
+            datasets:[{
+                label:'Movimientos',
+                data:valores,
+                borderWidth:3,
+                tension:.35
+            }]
+        }
+    });
+}
+
+async function crearTransferencia(){
+    const token = localStorage.getItem('token');
+    const id_cuenta_origen = cuentaUsuario;
+    const id_cuenta_destino = cuentaDestino.value;
+    const monto = montoTransferencia.value;
+
+    if(!id_cuenta_destino || !monto || Number(monto) <= 0){
+        alert('Ingresa datos válidos');
+        return;
+    }
+
+    const response = await fetch(`${API_URL}/transacciones`, {
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json',
+            'Authorization': token
+        },
+        body:JSON.stringify({
+            id_cuenta_origen,
+            id_cuenta_destino,
+            monto,
+            descripcion:'Transferencia',
+            id_tipo:1,
+            id_estado:2
+        })
+    });
+
+    const data = await response.json();
+
+    if(response.ok){
+        alert('Transferencia realizada');
+        cuentaDestino.value = '';
+        montoTransferencia.value = '';
+        cargarCuentas();
+        cargarTransacciones();
+        cargarEstadisticas();
+        mostrarSeccion('inicio');
+    }else{
+        alert(data.mensaje || 'Error al transferir');
+    }
+}
+
+async function cargarServicios(){
+    const token = localStorage.getItem('token');
+
+    const response = await fetch(`${API_URL}/pagos/servicios`, {
+        method:'GET',
+        headers:{ 'Authorization': token }
+    });
+
+    const servicios = await response.json();
+
+    let html = `<option value="">Selecciona un servicio</option>`;
+
+    servicios.forEach(s => {
+        html += `
+            <option value="${s.id_servicio}">
+                ${s.nombre} - ${s.empresa_proveedora || ''}
+            </option>
+        `;
+    });
+
+    servicioPago.innerHTML = html;
+}
+
+async function realizarPagoServicio(){
+    const token = localStorage.getItem('token');
+
+    const id_servicio = servicioPago.value;
+    const referencia = referenciaPago.value;
+    const monto = montoPago.value;
+
+    if(!id_servicio || !referencia || !monto){
+        alert('Completa todos los campos');
+        return;
+    }
+
+    const response = await fetch(`${API_URL}/pagos`, {
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json',
+            'Authorization': token
+        },
+        body:JSON.stringify({ id_servicio, referencia, monto })
+    });
+
+    const data = await response.json();
+
+    if(response.ok){
+        alert('Pago realizado correctamente');
+        servicioPago.value = '';
+        referenciaPago.value = '';
+        montoPago.value = '';
+        cargarCuentas();
+        cargarTransacciones();
+        cargarEstadisticas();
+        mostrarSeccion('inicio');
+    }else{
+        alert(data.mensaje || 'Error al pagar servicio');
+    }
+}
+
+async function cargarPanelAdmin(){
+    const token = localStorage.getItem('token');
+
+    const usuariosResponse = await fetch(`${API_URL}/admin/usuarios`, {
+        method:'GET',
+        headers:{ 'Authorization': token }
+    });
+
+    const transaccionesResponse = await fetch(`${API_URL}/admin/transacciones`, {
+        method:'GET',
+        headers:{ 'Authorization': token }
+    });
+
+    const usuarios = await usuariosResponse.json();
+    const transacciones = await transaccionesResponse.json();
+
+    totalUsuarios.innerText = usuarios.length;
+    totalTransacciones.innerText = transacciones.length;
+
+    let total = 0;
+    let usuariosHTML = '';
+
+    usuarios.forEach(u => {
+        total += Number(u.saldo || 0);
+        usuariosHTML += `
+            <tr>
+                <td>${u.id_usuario}</td>
+                <td>${u.nombre}</td>
+                <td>${u.correo}</td>
+                <td><span class="tag tag-blue">${u.rol}</span></td>
+                <td>${u.estado}</td>
+                <td>${u.id_cuenta || '-'}</td>
+                <td>$${u.saldo || 0}</td>
+            </tr>
+        `;
+    });
+
+    tablaUsuariosAdmin.innerHTML = usuariosHTML;
+    totalFondos.innerText = `$${total.toFixed(2)}`;
+
+    let transHTML = '';
+
+    transacciones.forEach(t => {
+        transHTML += `
+            <tr>
+                <td>${t.id_transaccion}</td>
+                <td>${t.id_cuenta_origen || '-'}</td>
+                <td>${t.usuario_origen || '-'}</td>
+                <td>${t.id_cuenta_destino || '-'}</td>
+                <td>${t.usuario_destino || '-'}</td>
+                <td>$${t.monto}</td>
+                <td>${new Date(t.fecha).toLocaleDateString()}</td>
+            </tr>
+        `;
+    });
+
+    tablaTransaccionesAdmin.innerHTML = transHTML;
+}
+
+async function asignarSaldoAdmin(){
+    const token = localStorage.getItem('token');
+
+    const id_cuenta = adminCuentaSaldo.value;
+    const monto = adminMontoSaldo.value;
+
+    const response = await fetch(`${API_URL}/admin/asignar-saldo`, {
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json',
+            'Authorization': token
+        },
+        body:JSON.stringify({ id_cuenta, monto })
+    });
+
+    const data = await response.json();
+
+    if(response.ok){
+        alert('Saldo asignado correctamente');
+        adminCuentaSaldo.value = '';
+        adminMontoSaldo.value = '';
+        cargarPanelAdmin();
+    }else{
+        alert(data.mensaje || 'Error al asignar saldo');
+    }
+}
+
+async function cambiarEstadoAdmin(){
+    const token = localStorage.getItem('token');
+
+    const id_usuario = adminUsuarioId.value;
+    const estado = adminEstadoUsuario.value;
+
+    const response = await fetch(`${API_URL}/admin/usuario/estado`, {
+        method:'PUT',
+        headers:{
+            'Content-Type':'application/json',
+            'Authorization': token
+        },
+        body:JSON.stringify({ id_usuario, estado })
+    });
+
+    const data = await response.json();
+
+    if(response.ok){
+        alert('Estado actualizado');
+        cargarPanelAdmin();
+    }else{
+        alert(data.mensaje || 'Error al cambiar estado');
+    }
+}
+
+async function cambiarRolAdmin(){
+    const token = localStorage.getItem('token');
+
+    const id_usuario = adminUsuarioId.value;
+    const rol = adminRolUsuario.value;
+
+    const response = await fetch(`${API_URL}/admin/usuario/rol`, {
+        method:'PUT',
+        headers:{
+            'Content-Type':'application/json',
+            'Authorization': token
+        },
+        body:JSON.stringify({ id_usuario, rol })
+    });
+
+    const data = await response.json();
+
+    if(response.ok){
+        alert('Rol actualizado');
+        cargarPanelAdmin();
+    }else{
+        alert(data.mensaje || 'Error al cambiar rol');
+    }
+}
+
+function logout(){
+    localStorage.clear();
+    dashboard.style.display = 'none';
+    loginScreen.style.display = 'flex';
+}
+</script>
+
+</body>
+</html>
